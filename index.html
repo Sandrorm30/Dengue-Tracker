@@ -7,49 +7,57 @@
 <title>DengueTracker</title>
 <link rel="manifest" href="manifest.json">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#222}
-  .header{background:linear-gradient(135deg,#0d47a1,#1976d2);color:#fff;padding:18px 20px;text-align:center}
-  .header h1{font-size:1.4rem;font-weight:700}
-  .header p{font-size:.85rem;opacity:.85;margin-top:4px}
-  .nav{display:flex;background:#fff;border-bottom:2px solid #e3e8f0}
-  .nav button{flex:1;padding:14px 0;border:none;background:none;font-size:.85rem;font-weight:600;color:#666;cursor:pointer;transition:.2s}
-  .nav button.active{color:#0d47a1;border-bottom:3px solid #0d47a1}
-  .tab-content{display:none;padding:16px;max-width:800px;margin:0 auto}
-  .tab-content.active{display:block}
-  .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-  .card h3{color:#0d47a1;margin-bottom:14px;font-size:1rem;border-bottom:1px solid #e3e8f0;padding-bottom:8px}
-  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .form-group{margin-bottom:12px}
-  .form-group label{display:block;font-size:.8rem;font-weight:600;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
-  .form-group input,.form-group select{width:100%;padding:11px 12px;border:1.5px solid #dde3ed;border-radius:8px;font-size:.95rem;transition:.2s;background:#fafbfc}
-  .form-group input:focus,.form-group select:focus{border-color:#1976d2;outline:none;background:#fff}
-  .btn{width:100%;padding:14px;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s}
-  .btn-primary{background:#0d47a1;color:#fff}
-  .btn-primary:hover{background:#1565c0}
-  .btn-danger{background:#e53935;color:#fff;width:auto;padding:8px 16px;font-size:.8rem;border-radius:6px;font-weight:600;border:none;cursor:pointer}
-  .btn-edit{background:#1976d2;color:#fff;width:auto;padding:8px 16px;font-size:.8rem;border-radius:6px;font-weight:600;border:none;cursor:pointer;margin-right:6px}
-  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-  .filters select,.filters input{flex:1;min-width:120px;padding:10px;border:1.5px solid #dde3ed;border-radius:8px;font-size:.9rem;background:#fff}
-  .filters .btn-filter{width:auto;padding:10px 20px;font-size:.9rem;background:#0d47a1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
-  .notif-item{background:#fff;border-radius:10px;padding:16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.06);border-left:4px solid #1976d2}
-  .notif-item.dengue{border-left-color:#e53935}
-  .notif-item.chikungunya{border-left-color:#ff9800}
-  .notif-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-  .notif-title{font-weight:700;font-size:.95rem;color:#0d47a1}
-  .tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff}
-  .tag.dengue{background:#e53935}
-  .tag.chikungunya{background:#ff9800}
-  .notif-detail{font-size:.82rem;color:#555;margin-top:4px;line-height:1.6}
-  .notif-detail span{display:inline-block;margin-right:16px}
-  .notif-actions{margin-top:10px;display:flex;gap:6px}
-  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
-  .summary-card{background:#fff;border-radius:10px;padding:16px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.07)}
-  .summary-card .value{font-size:2rem;font-weight:800;color:#0d47a1}
-  .summary-card .label{font-size:.75rem;color:#777;margin-top:4px}
-  .empty{text-align:center;padding:40px;color:#aaa;font-size:.9rem}
-  .offline-banner{background:#ff9800;color:#fff;text-align:center;padding:8px;font-size:.85rem;font-weight:600;display:none}
-  @media(max-width:500px){.form-row{grid-template-columns:1fr}.filters{flex-direction:column}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#222}
+.header{background:linear-gradient(135deg,#0d47a1,#1976d2);color:#fff;padding:18px 20px;text-align:center}
+.header h1{font-size:1.4rem;font-weight:700}
+.header p{font-size:.85rem;opacity:.85;margin-top:3px}
+.nav{display:flex;background:#fff;border-bottom:2px solid #e3e8f0;position:sticky;top:0;z-index:10}
+.nav button{flex:1;padding:13px 0;border:none;background:none;font-size:.85rem;font-weight:600;color:#777;cursor:pointer;transition:.2s}
+.nav button.active{color:#0d47a1;border-bottom:3px solid #0d47a1}
+.tab-content{display:none;padding:16px;max-width:760px;margin:0 auto}
+.tab-content.active{display:block}
+.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.card h3{color:#0d47a1;margin-bottom:14px;font-size:.95rem;border-bottom:1px solid #e3e8f0;padding-bottom:8px;display:flex;align-items:center;gap:6px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:.75rem;font-weight:700;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.form-group input,.form-group select{width:100%;padding:11px 12px;border:1.5px solid #dde3ed;border-radius:8px;font-size:.95rem;transition:.2s;background:#fafbfc;color:#222}
+.form-group input:focus,.form-group select:focus{border-color:#1976d2;outline:none;background:#fff}
+.form-group input[readonly]{background:#eef2f7;color:#666;cursor:default}
+.badge-num{display:inline-block;background:#0d47a1;color:#fff;border-radius:20px;padding:2px 12px;font-size:.8rem;font-weight:700;margin-left:auto}
+.btn{width:100%;padding:14px;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;margin-top:6px}
+.btn-primary{background:#0d47a1;color:#fff}
+.btn-primary:hover{background:#1565c0}
+.btn-secondary{background:#6c757d;color:#fff;display:none}
+.btn-danger{background:#e53935;color:#fff;width:auto;padding:8px 14px;font-size:.8rem;border-radius:6px;font-weight:600;border:none;cursor:pointer}
+.btn-edit{background:#1976d2;color:#fff;width:auto;padding:8px 14px;font-size:.8rem;border-radius:6px;font-weight:600;border:none;cursor:pointer;margin-right:6px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.filters select,.filters input{flex:1;min-width:130px;padding:10px 12px;border:1.5px solid #dde3ed;border-radius:8px;font-size:.9rem;background:#fff}
+.btn-filter{width:auto;padding:10px 20px;font-size:.9rem;background:#0d47a1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+.notif-item{background:#fff;border-radius:10px;padding:16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.07);border-left:4px solid #1976d2}
+.notif-item.dengue{border-left-color:#e53935}
+.notif-item.chikungunya{border-left-color:#ff9800}
+.notif-item.zika{border-left-color:#9c27b0}
+.notif-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.notif-num{font-size:.75rem;background:#0d47a1;color:#fff;border-radius:20px;padding:2px 10px;font-weight:700}
+.notif-title{font-weight:700;font-size:.95rem;color:#333;margin-top:4px}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff;margin-top:4px}
+.tag.dengue{background:#e53935}
+.tag.chikungunya{background:#ff9800}
+.tag.zika{background:#9c27b0}
+.notif-detail{font-size:.82rem;color:#555;margin-top:8px;line-height:1.8;display:flex;flex-wrap:wrap;gap:4px 16px}
+.notif-detail span{white-space:nowrap}
+.notif-actions{margin-top:10px;display:flex;gap:6px}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.summary-card{background:#fff;border-radius:10px;padding:16px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.summary-card .value{font-size:2rem;font-weight:800;color:#0d47a1}
+.summary-card .label{font-size:.72rem;color:#777;margin-top:4px;line-height:1.3}
+.empty{text-align:center;padding:40px;color:#aaa;font-size:.9rem}
+.offline-banner{background:#ff9800;color:#fff;text-align:center;padding:8px;font-size:.85rem;font-weight:600;display:none}
+.perc-info{font-size:.75rem;color:#1976d2;margin-top:3px;font-weight:600}
+@media(max-width:520px){.form-row,.form-row-3{grid-template-columns:1fr}.filters{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -70,41 +78,38 @@
 <!-- ===== LANÇAMENTO ===== -->
 <div id="lancamento" class="tab-content active">
   <form id="notifForm" onsubmit="submitForm(event)">
-    <input type="hidden" id="edit_id">
+    <input type="hidden" id="edit_num">
 
     <div class="card">
-      <h3>📅 Datas</h3>
+      <h3>📋 Identificação <span class="badge-num" id="badge_num">Novo</span></h3>
       <div class="form-row">
         <div class="form-group">
-          <label>Data Notificação *</label>
+          <label>Data da Notificação *</label>
           <input type="date" id="data_notificacao" required>
         </div>
         <div class="form-group">
-          <label>Data Recebimento VA</label>
+          <label>Data de Recebimento VA</label>
           <input type="date" id="data_recebimento">
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h3>🦠 Agravo e Suspeitos</h3>
-      <div class="form-group">
-        <label>Agravo *</label>
-        <select id="agravo" required>
-          <option value="">Selecione...</option>
-          <option>Dengue</option>
-          <option>Chikungunya</option>
-          <option>Zika</option>
-        </select>
-      </div>
+      <h3>🦠 Suspeitos</h3>
       <div class="form-row">
         <div class="form-group">
-          <label>Suspeitos Deng.</label>
-          <input type="number" id="suspeito_deng" min="0">
+          <label>Dengue</label>
+          <select id="suspeito_deng">
+            <option value="">-</option>
+            <option value="*">✓ Suspeito</option>
+          </select>
         </div>
         <div class="form-group">
-          <label>Suspeitos Chikun.</label>
-          <input type="number" id="suspeito_chik" min="0">
+          <label>Chikungunya</label>
+          <select id="suspeito_chik">
+            <option value="">-</option>
+            <option value="*">✓ Suspeito</option>
+          </select>
         </div>
       </div>
     </div>
@@ -113,7 +118,7 @@
       <h3>👤 Paciente e PVE</h3>
       <div class="form-group">
         <label>Paciente</label>
-        <input type="text" id="paciente" placeholder="Nome completo">
+        <input type="text" id="paciente" placeholder="Nome completo do paciente">
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -128,30 +133,29 @@
     </div>
 
     <div class="card">
-      <h3>🏠 Imóveis</h3>
-      <div class="form-row">
+      <h3>🏠 Imóveis Visitados</h3>
+      <div class="form-row-3">
         <div class="form-group">
-          <label>Total Imóveis</label>
-          <input type="number" id="total_imoveis" min="0">
+          <label>Total de Imóveis</label>
+          <input type="number" id="total_imoveis" min="0" oninput="calcPerc()">
         </div>
         <div class="form-group">
           <label>Total Visitados</label>
-          <input type="number" id="total_imoveis_v" min="0">
+          <input type="number" id="total_imoveis_v" min="0" oninput="calcPerc()">
         </div>
-      </div>
-      <div class="form-row">
         <div class="form-group">
           <label>% Visitados</label>
-          <input type="number" id="perc_visitas" step="0.01" min="0">
+          <input type="text" id="perc_visitas" readonly placeholder="Auto">
+          <div class="perc-info" id="perc_info"></div>
         </div>
-        <div class="form-group">
-          <label>Aedes aegypti/albopictus</label>
-          <select id="aedes">
-            <option value="">-</option>
-            <option>Sim</option>
-            <option>Não</option>
-          </select>
-        </div>
+      </div>
+      <div class="form-group">
+        <label>Aedes aegypti / albopictus</label>
+        <select id="aedes">
+          <option value="">-</option>
+          <option value="Sim">Sim</option>
+          <option value="Não">Não</option>
+        </select>
       </div>
     </div>
 
@@ -163,96 +167,117 @@
       </div>
       <div class="form-group">
         <label>Endereços</label>
-        <input type="text" id="endereco" placeholder="Rua, número, bairro">
+        <input type="text" id="endereco" placeholder="Rua, número, bairro...">
       </div>
     </div>
 
     <div class="card">
-      <h3>🔬 Resultados</h3>
+      <h3>🔬 Negativos</h3>
       <div class="form-row">
         <div class="form-group">
-          <label>Neg. Deng.</label>
-          <input type="number" id="neg_deng" min="0">
+          <label>Dengue</label>
+          <input type="number" id="neg_deng" min="0" placeholder="0">
         </div>
         <div class="form-group">
-          <label>Neg. Chikun.</label>
-          <input type="number" id="neg_chik" min="0">
+          <label>Chikungunya</label>
+          <input type="number" id="neg_chik" min="0" placeholder="0">
         </div>
       </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Positivos Dengue</h3>
       <div class="form-row">
         <div class="form-group">
-          <label>Pos. Dengue Aut.</label>
-          <input type="number" id="pos_deng_aut" min="0">
+          <label>Autóctone</label>
+          <input type="number" id="pos_deng_aut" min="0" placeholder="0">
         </div>
         <div class="form-group">
-          <label>Pos. Dengue Imp.</label>
-          <input type="number" id="pos_deng_imp" min="0">
+          <label>Importado</label>
+          <input type="number" id="pos_deng_imp" min="0" placeholder="0">
         </div>
       </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Positivos Chikungunya</h3>
       <div class="form-row">
         <div class="form-group">
-          <label>Pos. Chikun. Aut.</label>
-          <input type="number" id="pos_chik_aut" min="0">
+          <label>Autóctone</label>
+          <input type="number" id="pos_chik_aut" min="0" placeholder="0">
         </div>
         <div class="form-group">
-          <label>Pos. Chikun. Imp.</label>
-          <input type="number" id="pos_chik_imp" min="0">
+          <label>Importado</label>
+          <input type="number" id="pos_chik_imp" min="0" placeholder="0">
         </div>
       </div>
     </div>
 
     <button type="submit" class="btn btn-primary" id="submitBtn">💾 Salvar Notificação</button>
-    <button type="button" class="btn" style="background:#6c757d;color:#fff;margin-top:8px;display:none" id="cancelEdit" onclick="cancelEdit()">✖ Cancelar Edição</button>
+    <button type="button" class="btn btn-secondary" id="cancelEdit" onclick="cancelEdit()">✖ Cancelar Edição</button>
   </form>
 </div>
 
 <!-- ===== CONSULTA ===== -->
 <div id="consulta" class="tab-content">
   <div class="filters">
-    <input type="text" id="f_paciente" placeholder="Paciente...">
+    <input type="text" id="f_paciente" placeholder="🔎 Paciente...">
     <select id="f_agravo">
       <option value="">Todos Agravos</option>
       <option>Dengue</option>
       <option>Chikungunya</option>
       <option>Zika</option>
     </select>
-    <input type="text" id="f_localidade" placeholder="Localidade...">
-    <button class="btn-filter" onclick="applyFilters()">🔍 Filtrar</button>
+    <input type="text" id="f_localidade" placeholder="🔎 Localidade...">
+    <button class="btn-filter" onclick="applyFilters()">Filtrar</button>
   </div>
-  <div id="listContainer"><div class="empty">Carregando...</div></div>
+  <div id="listContainer"><div class="empty">Carregando registros...</div></div>
 </div>
 
 <!-- ===== DASHBOARD ===== -->
 <div id="dashboard" class="tab-content">
   <div class="summary-grid" id="summaryGrid">
-    <div class="empty">Carregando...</div>
+    <div class="empty">Carregando dashboard...</div>
   </div>
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz7pBY6LWGNI8i27FFKFXulPKyl5B8MqmgwCho33I2x0M4-f2T8NG42_kxQUX9iCz3log/exec'; // << Cole aqui o URL da Web App do Apps Script
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQHX703Le1Ppnmu1PJRm1BirHlayYIGT-ZhzYu5RL41DfRIwKcjYUGju3R_Qeo_I2MzA/exec'; // << Cole aqui a URL da Web App
 
 let allNotifications = [];
 
-// Offline
-window.addEventListener('offline', () => { document.getElementById('offlineBanner').style.display='block'; });
-window.addEventListener('online',  () => { document.getElementById('offlineBanner').style.display='none'; syncOffline(); });
+window.addEventListener('offline', () => document.getElementById('offlineBanner').style.display = 'block');
+window.addEventListener('online',  () => { document.getElementById('offlineBanner').style.display = 'none'; syncOffline(); });
 
 function showTab(id, btn) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if(btn) btn.classList.add('active');
-  if(id === 'consulta' || id === 'dashboard') loadNotifications();
+  if (btn) btn.classList.add('active');
+  if (id === 'consulta' || id === 'dashboard') loadNotifications();
 }
 
-// ======= FORM =======
+// ===== % AUTO =====
+function calcPerc() {
+  const tot = parseFloat(document.getElementById('total_imoveis').value) || 0;
+  const vis = parseFloat(document.getElementById('total_imoveis_v').value) || 0;
+  if (tot > 0 && vis >= 0) {
+    const p = ((vis / tot) * 100).toFixed(2);
+    document.getElementById('perc_visitas').value = p + '%';
+    document.getElementById('perc_info').textContent = vis + ' de ' + tot + ' imóveis';
+  } else {
+    document.getElementById('perc_visitas').value = '';
+    document.getElementById('perc_info').textContent = '';
+  }
+}
+
+// ===== FORM =====
 function getFormData() {
+  const num = document.getElementById('edit_num').value;
   return {
-    id:               document.getElementById('edit_id').value || ('temp_' + Date.now()),
+    num_notificacao:  num || null,
     data_notificacao: document.getElementById('data_notificacao').value,
     data_recebimento: document.getElementById('data_recebimento').value,
-    agravo:           document.getElementById('agravo').value,
     suspeito_deng:    document.getElementById('suspeito_deng').value,
     suspeito_chik:    document.getElementById('suspeito_chik').value,
     paciente:         document.getElementById('paciente').value,
@@ -260,7 +285,6 @@ function getFormData() {
     termino_pve:      document.getElementById('termino_pve').value,
     total_imoveis:    document.getElementById('total_imoveis').value,
     total_imoveis_v:  document.getElementById('total_imoveis_v').value,
-    perc_visitas:     document.getElementById('perc_visitas').value,
     aedes:            document.getElementById('aedes').value,
     localidades:      document.getElementById('localidades').value,
     endereco:         document.getElementById('endereco').value,
@@ -275,107 +299,100 @@ function getFormData() {
 
 function clearForm() {
   document.getElementById('notifForm').reset();
-  document.getElementById('edit_id').value = '';
+  document.getElementById('edit_num').value = '';
+  document.getElementById('perc_visitas').value = '';
+  document.getElementById('perc_info').textContent = '';
+  document.getElementById('badge_num').textContent = 'Novo';
   document.getElementById('submitBtn').textContent = '💾 Salvar Notificação';
   document.getElementById('cancelEdit').style.display = 'none';
 }
 
 function cancelEdit() { clearForm(); }
 
+function toInputDate(val) {
+  if (!val) return '';
+  const p = val.split('/');
+  return p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : val;
+}
+
 function fillForm(n) {
-  document.getElementById('edit_id').value = n.id;
-  const toInput = (val) => {
-    if(!val) return '';
-    const parts = val.split('/');
-    if(parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
-    return val;
-  };
-  document.getElementById('data_notificacao').value = toInput(n.data_notificacao);
-  document.getElementById('data_recebimento').value = toInput(n.data_recebimento);
-  document.getElementById('agravo').value           = n.agravo || '';
+  document.getElementById('edit_num').value         = n.num_notificacao;
+  document.getElementById('data_notificacao').value = toInputDate(n.data_notificacao);
+  document.getElementById('data_recebimento').value = toInputDate(n.data_recebimento);
   document.getElementById('suspeito_deng').value    = n.suspeito_deng || '';
   document.getElementById('suspeito_chik').value    = n.suspeito_chik || '';
-  document.getElementById('paciente').value         = n.paciente || '';
-  document.getElementById('inicio_pve').value       = toInput(n.inicio_pve);
-  document.getElementById('termino_pve').value      = toInput(n.termino_pve);
-  document.getElementById('total_imoveis').value    = n.total_imoveis || '';
+  document.getElementById('paciente').value         = n.paciente      || '';
+  document.getElementById('inicio_pve').value       = toInputDate(n.inicio_pve);
+  document.getElementById('termino_pve').value      = toInputDate(n.termino_pve);
+  document.getElementById('total_imoveis').value    = n.total_imoveis   || '';
   document.getElementById('total_imoveis_v').value  = n.total_imoveis_v || '';
-  document.getElementById('perc_visitas').value     = n.perc_visitas || '';
-  document.getElementById('aedes').value            = n.aedes || '';
-  document.getElementById('localidades').value      = n.localidades || '';
-  document.getElementById('endereco').value         = n.endereco || '';
-  document.getElementById('neg_deng').value         = n.neg_deng || '';
-  document.getElementById('neg_chik').value         = n.neg_chik || '';
-  document.getElementById('pos_deng_aut').value     = n.pos_deng_aut || '';
-  document.getElementById('pos_deng_imp').value     = n.pos_deng_imp || '';
-  document.getElementById('pos_chik_aut').value     = n.pos_chik_aut || '';
-  document.getElementById('pos_chik_imp').value     = n.pos_chik_imp || '';
-  document.getElementById('submitBtn').textContent  = '✏️ Atualizar Notificação';
+  document.getElementById('aedes').value            = n.aedes           || '';
+  document.getElementById('localidades').value      = n.localidades     || '';
+  document.getElementById('endereco').value         = n.endereco        || '';
+  document.getElementById('neg_deng').value         = n.neg_deng        || '';
+  document.getElementById('neg_chik').value         = n.neg_chik        || '';
+  document.getElementById('pos_deng_aut').value     = n.pos_deng_aut    || '';
+  document.getElementById('pos_deng_imp').value     = n.pos_deng_imp    || '';
+  document.getElementById('pos_chik_aut').value     = n.pos_chik_aut    || '';
+  document.getElementById('pos_chik_imp').value     = n.pos_chik_imp    || '';
+  calcPerc();
+  document.getElementById('badge_num').textContent  = 'Nº ' + n.num_notificacao;
+  document.getElementById('submitBtn').textContent   = '✏️ Atualizar Notificação';
   document.getElementById('cancelEdit').style.display = 'block';
   showTab('lancamento', document.querySelectorAll('.nav button')[0]);
-  window.scrollTo({top:0, behavior:'smooth'});
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 async function submitForm(e) {
   e.preventDefault();
   const data = getFormData();
-  const btn = document.getElementById('submitBtn');
+  const btn  = document.getElementById('submitBtn');
   btn.textContent = '⏳ Salvando...'; btn.disabled = true;
   try {
-    if(navigator.onLine && SCRIPT_URL) {
-      const resp = await fetch(SCRIPT_URL, {
-        method:'POST',
-        body: JSON.stringify({action:'saveNotification', data})
-      });
+    if (navigator.onLine && SCRIPT_URL) {
+      const resp   = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'saveNotification', data }) });
       const result = await resp.json();
-      if(result.success) { clearForm(); alert('✅ Salvo com sucesso!'); }
+      if (result.success) { alert('✅ Nº ' + result.num_notificacao + ' salvo com sucesso!'); clearForm(); }
     } else {
-      saveOffline(data);
-      alert('📡 Sem conexão — salvo localmente. Sincronizará automaticamente.');
-      clearForm();
+      saveOffline(data); alert('📡 Sem conexão — salvo localmente. Sincronizará quando online.'); clearForm();
     }
   } catch(err) {
-    saveOffline(data);
-    alert('📡 Sem conexão — salvo localmente.');
-    clearForm();
+    saveOffline(data); alert('📡 Erro de conexão — salvo localmente.'); clearForm();
   }
   btn.textContent = '💾 Salvar Notificação'; btn.disabled = false;
 }
 
-// ======= OFFLINE =======
+// ===== OFFLINE =====
 function saveOffline(data) {
-  const queue = JSON.parse(localStorage.getItem('dengue_queue') || '[]');
-  queue.push(data);
-  localStorage.setItem('dengue_queue', JSON.stringify(queue));
+  const q = JSON.parse(localStorage.getItem('dengue_queue') || '[]');
+  q.push(data);
+  localStorage.setItem('dengue_queue', JSON.stringify(q));
 }
 
 async function syncOffline() {
-  if(!SCRIPT_URL) return;
-  const queue = JSON.parse(localStorage.getItem('dengue_queue') || '[]');
-  if(!queue.length) return;
+  if (!SCRIPT_URL) return;
+  const q = JSON.parse(localStorage.getItem('dengue_queue') || '[]');
+  if (!q.length) return;
   const synced = [];
-  for(const data of queue) {
+  for (const data of q) {
     try {
-      const resp = await fetch(SCRIPT_URL, {method:'POST', body:JSON.stringify({action:'saveNotification', data})});
-      const r = await resp.json();
-      if(r.success) synced.push(data.id);
+      const r = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'saveNotification', data }) });
+      const j = await r.json();
+      if (j.success) synced.push(data.num_notificacao);
     } catch(e) {}
   }
-  const remaining = queue.filter(d => !synced.includes(d.id));
+  const remaining = q.filter(d => !synced.includes(d.num_notificacao));
   localStorage.setItem('dengue_queue', JSON.stringify(remaining));
-  if(synced.length) alert(`✅ ${synced.length} registro(s) sincronizado(s)!`);
+  if (synced.length) alert('✅ ' + synced.length + ' registro(s) sincronizado(s)!');
 }
 
-// ======= LISTA =======
+// ===== LISTA =====
 async function loadNotifications() {
-  if(!SCRIPT_URL) { renderList([]); renderDashboard([]); return; }
+  if (!SCRIPT_URL) { renderList([]); renderDashboard([]); return; }
   try {
-    const url = `${SCRIPT_URL}?action=getNotifications`;
-    const resp = await fetch(url);
+    const resp = await fetch(SCRIPT_URL + '?action=getNotifications');
     allNotifications = await resp.json();
-  } catch(e) {
-    allNotifications = [];
-  }
+  } catch(e) { allNotifications = []; }
   renderList(allNotifications);
   renderDashboard(allNotifications);
 }
@@ -384,74 +401,91 @@ function applyFilters() {
   const pac = document.getElementById('f_paciente').value.toLowerCase();
   const agr = document.getElementById('f_agravo').value;
   const loc = document.getElementById('f_localidade').value.toLowerCase();
-  const filtered = allNotifications.filter(n =>
+  renderList(allNotifications.filter(n =>
     (!pac || (n.paciente||'').toLowerCase().includes(pac)) &&
-    (!agr || n.agravo === agr) &&
+    (!agr || (n.suspeito_deng === '*' && agr === 'Dengue') || (n.suspeito_chik === '*' && agr === 'Chikungunya')) &&
     (!loc || (n.localidades||'').toLowerCase().includes(loc))
-  );
-  renderList(filtered);
+  ));
+}
+
+function agravoCls(n) {
+  if (n.suspeito_deng === '*' && n.suspeito_chik === '*') return 'dengue';
+  if (n.suspeito_deng === '*') return 'dengue';
+  if (n.suspeito_chik === '*') return 'chikungunya';
+  return '';
+}
+
+function agravoTag(n) {
+  const tags = [];
+  if (n.suspeito_deng === '*') tags.push('<span class="tag dengue">Dengue</span>');
+  if (n.suspeito_chik === '*') tags.push('<span class="tag chikungunya">Chikungunya</span>');
+  return tags.join(' ') || '<span class="tag" style="background:#999">Indefinido</span>';
 }
 
 function renderList(list) {
   const el = document.getElementById('listContainer');
-  if(!list.length) { el.innerHTML = '<div class="empty">Nenhum registro encontrado.</div>'; return; }
-  el.innerHTML = list.map(n => {
-    const cls = (n.agravo||'').toLowerCase();
-    return `<div class="notif-item ${cls}">
+  if (!list.length) { el.innerHTML = '<div class="empty">Nenhum registro encontrado.</div>'; return; }
+  el.innerHTML = list.map(n => `
+    <div class="notif-item ${agravoCls(n)}">
       <div class="notif-header">
         <div>
+          <span class="notif-num">Nº ${n.num_notificacao}</span>
           <div class="notif-title">${n.paciente || 'Sem nome'}</div>
-          <div style="margin-top:4px"><span class="tag ${cls}">${n.agravo||'-'}</span></div>
+          <div style="margin-top:4px">${agravoTag(n)}</div>
         </div>
-        <div style="font-size:.8rem;color:#888">${n.data_notificacao||''}</div>
+        <div style="font-size:.8rem;color:#888;text-align:right">
+          <div>${n.data_notificacao||''}</div>
+          <div style="margin-top:3px">${n.aedes === 'Sim' ? '🦟 Aedes' : ''}</div>
+        </div>
       </div>
       <div class="notif-detail">
         <span>📅 PVE: ${n.inicio_pve||'-'} → ${n.termino_pve||'-'}</span>
-        <span>🏠 Imóveis: ${n.total_imoveis||'-'} (${n.perc_visitas||'-'}%)</span>
+        <span>🏠 ${n.total_imoveis||'-'} imóveis (${n.perc_visitas||'-'})</span>
         <span>📍 ${n.localidades||'-'}</span>
-        <span>🦟 Aedes: ${n.aedes||'-'}</span>
+        <span>➖ Neg.D: ${n.neg_deng||0} | Neg.C: ${n.neg_chik||0}</span>
+        <span>✅ Pos.D: ${(+n.pos_deng_aut||0)+(+n.pos_deng_imp||0)} | Pos.C: ${(+n.pos_chik_aut||0)+(+n.pos_chik_imp||0)}</span>
       </div>
       <div class="notif-actions">
-        <button class="btn-edit" onclick='fillForm(${JSON.stringify(n).replace(/'/g,"&apos;")})'>✏️ Editar</button>
-        <button class="btn-danger" onclick="deleteNotif('${n.id}')">🗑️ Excluir</button>
+        <button class="btn-edit" onclick='fillForm(${JSON.stringify(n).replace(/'/g,"&#39;")})'>✏️ Editar</button>
+        <button class="btn-danger" onclick="deleteNotif('${n.num_notificacao}')">🗑️ Excluir</button>
       </div>
-    </div>`;
-  }).join('');
+    </div>`).join('');
 }
 
-async function deleteNotif(id) {
-  if(!confirm('Excluir esta notificação?')) return;
-  if(!SCRIPT_URL) return;
-  try {
-    await fetch(SCRIPT_URL, {method:'POST', body:JSON.stringify({action:'deleteNotification', id})});
-    loadNotifications();
-  } catch(e) { alert('Erro ao excluir.'); }
+async function deleteNotif(num) {
+  if (!confirm('Excluir notificação Nº ' + num + '?')) return;
+  if (!SCRIPT_URL) return;
+  await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteNotification', id: num }) });
+  loadNotifications();
 }
 
-// ======= DASHBOARD =======
+// ===== DASHBOARD =====
 function renderDashboard(list) {
-  const total   = list.length;
-  const dengue  = list.filter(n => n.agravo === 'Dengue').length;
-  const chik    = list.filter(n => n.agravo === 'Chikungunya').length;
-  const zika    = list.filter(n => n.agravo === 'Zika').length;
-  const posD    = list.reduce((s,n) => s + (parseInt(n.pos_deng_aut)||0) + (parseInt(n.pos_deng_imp)||0), 0);
-  const posC    = list.reduce((s,n) => s + (parseInt(n.pos_chik_aut)||0) + (parseInt(n.pos_chik_imp)||0), 0);
-  const negD    = list.reduce((s,n) => s + (parseInt(n.neg_deng)||0), 0);
-  const aedes   = list.filter(n => n.aedes === 'Sim').length;
+  const total    = list.length;
+  const dengue   = list.filter(n => n.suspeito_deng === '*').length;
+  const chik     = list.filter(n => n.suspeito_chik === '*').length;
+  const aedes    = list.filter(n => n.aedes === 'Sim').length;
+  const posDA    = list.reduce((s,n) => s + (+n.pos_deng_aut||0), 0);
+  const posDI    = list.reduce((s,n) => s + (+n.pos_deng_imp||0), 0);
+  const posCA    = list.reduce((s,n) => s + (+n.pos_chik_aut||0), 0);
+  const posCI    = list.reduce((s,n) => s + (+n.pos_chik_imp||0), 0);
+  const negD     = list.reduce((s,n) => s + (+n.neg_deng||0), 0);
+  const negC     = list.reduce((s,n) => s + (+n.neg_chik||0), 0);
   document.getElementById('summaryGrid').innerHTML = `
-    <div class="summary-card"><div class="value">${total}</div><div class="label">Total Notificações</div></div>
-    <div class="summary-card"><div class="value" style="color:#e53935">${dengue}</div><div class="label">Dengue</div></div>
-    <div class="summary-card"><div class="value" style="color:#ff9800">${chik}</div><div class="label">Chikungunya</div></div>
-    <div class="summary-card"><div class="value" style="color:#9c27b0">${zika}</div><div class="label">Zika</div></div>
-    <div class="summary-card"><div class="value" style="color:#e53935">${posD}</div><div class="label">Positivos Dengue</div></div>
-    <div class="summary-card"><div class="value" style="color:#ff9800">${posC}</div><div class="label">Positivos Chikun.</div></div>
-    <div class="summary-card"><div class="value" style="color:#4caf50">${negD}</div><div class="label">Negativos Dengue</div></div>
+    <div class="summary-card"><div class="value">${total}</div><div class="label">Total de Notificações</div></div>
+    <div class="summary-card"><div class="value" style="color:#e53935">${dengue}</div><div class="label">Suspeitos Dengue</div></div>
+    <div class="summary-card"><div class="value" style="color:#ff9800">${chik}</div><div class="label">Suspeitos Chikungunya</div></div>
     <div class="summary-card"><div class="value" style="color:#f44336">${aedes}</div><div class="label">Com Aedes</div></div>
+    <div class="summary-card"><div class="value" style="color:#c62828">${posDA}</div><div class="label">Pos. Dengue Autóctone</div></div>
+    <div class="summary-card"><div class="value" style="color:#e57373">${posDI}</div><div class="label">Pos. Dengue Importado</div></div>
+    <div class="summary-card"><div class="value" style="color:#e65100">${posCA}</div><div class="label">Pos. Chikun. Autóctone</div></div>
+    <div class="summary-card"><div class="value" style="color:#ffb74d">${posCI}</div><div class="label">Pos. Chikun. Importado</div></div>
+    <div class="summary-card"><div class="value" style="color:#388e3c">${negD}</div><div class="label">Negativos Dengue</div></div>
+    <div class="summary-card"><div class="value" style="color:#66bb6a">${negC}</div><div class="label">Negativos Chikungunya</div></div>
   `;
 }
 
-// Carregar ao iniciar
-window.onload = () => { syncOffline(); };
+window.onload = () => syncOffline();
 </script>
 </body>
 </html>
