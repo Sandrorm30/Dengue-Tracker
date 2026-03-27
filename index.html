@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0d47a1">
+<title>DengueTracker</title>
+<link rel="manifest" href="manifest.json">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#222}
+.header{background:linear-gradient(135deg,#0d47a1,#1976d2);color:#fff;padding:18px 20px;text-align:center}
+.header h1{font-size:1.4rem;font-weight:700}
+.header p{font-size:.85rem;opacity:.85;margin-top:3px}
+.nav{display:flex;background:#fff;border-bottom:2px solid #e3e8f0;position:sticky;top:0;z-index:10}
+.nav button{flex:1;padding:13px 0;border:none;background:none;font-size:.85rem;font-weight:600;color:#777;cursor:pointer}
+.nav button.active{color:#0d47a1;border-bottom:3px solid #0d47a1}
+.tab{display:none;padding:16px;max-width:760px;margin:0 auto}
+.tab.active{display:block}
+
+/* Form cards */
+.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.card h3{color:#0d47a1;margin-bottom:14px;font-size:.95rem;border-bottom:1px solid #e3e8f0;padding-bottom:8px;display:flex;align-items:center;gap:6px}
+.badge-num{background:#0d47a1;color:#fff;border-radius:20px;padding:2px 12px;font-size:.8rem;font-weight:700;margin-left:auto}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:.75rem;font-weight:700;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.fg input,.fg select{width:100%;padding:11px 12px;border:1.5px solid #dde3ed;border-radius:8px;font-size:.95rem;background:#fafbfc;color:#222;transition:.2s}
+.fg input:focus,.fg select:focus{border-color:#1976d2;outline:none;background:#fff}
+.fg input[readonly]{background:#eef2f7;color:#555}
+.perc-hint{font-size:.75rem;color:#1976d2;margin-top:3px;font-weight:600;min-height:16px}
+.btn{width:100%;padding:14px;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:6px}
+.btn-primary{background:#0d47a1;color:#fff}
+.btn-secondary{background:#6c757d;color:#fff}
+
+/* Lista notificações */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.filters input,.filters select{flex:1;min-width:120px;padding:10px 12px;border:1.5px solid #dde3ed;border-radius:8px;font-size:.9rem;background:#fff}
+.btn-filter{padding:10px 18px;background:#0d47a1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+.notif-item{background:#fff;border-radius:10px;padding:16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.07);border-left:4px solid #1976d2;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.notif-item:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.notif-item.dengue{border-left-color:#e53935}
+.notif-item.chikungunya{border-left-color:#ff9800}
+.ni-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.ni-num{font-size:.75rem;background:#0d47a1;color:#fff;border-radius:20px;padding:2px 10px;font-weight:700}
+.ni-title{font-weight:700;font-size:.95rem;color:#333;margin-top:5px}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:700;color:#fff;margin-top:4px}
+.tag.dengue{background:#e53935}
+.tag.chikungunya{background:#ff9800}
+.tag.empty{background:#999}
+.ni-preview{font-size:.82rem;color:#777;margin-top:6px;display:flex;flex-wrap:wrap;gap:2px 14px}
+.empty{text-align:center;padding:40px;color:#aaa;font-size:.9rem}
+
+/* Visualização */
+.view-back{background:none;border:none;font-size:1.4rem;cursor:pointer;color:#0d47a1;padding:4px}
+.view-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.view-title{font-size:1.1rem;font-weight:700;color:#0d47a1}
+.view-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.view-card h4{font-size:.8rem;font-weight:700;color:#0d47a1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #e3e8f0}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vf label{font-size:.72rem;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:2px}
+.vf span{font-size:.92rem;color:#222;font-weight:500}
+.vf .none{color:#bbb;font-style:italic}
+.view-actions{display:flex;gap:10px;margin-top:6px}
+.btn-edit-v{flex:1;padding:14px;background:#1976d2;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer}
+.btn-del-v{flex:1;padding:14px;background:#e53935;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer}
+
+/* Dashboard */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.dash-card{background:#fff;border-radius:10px;padding:16px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.dash-card .dval{font-size:2rem;font-weight:800;color:#0d47a1}
+.dash-card .dlbl{font-size:.72rem;color:#777;margin-top:4px;line-height:1.3}
+
+.offline-bar{background:#ff9800;color:#fff;text-align:center;padding:8px;font-size:.85rem;font-weight:600;display:none}
+@media(max-width:520px){.row2,.row3,.vgrid{grid-template-columns:1fr}.filters{flex-direction:column}.view-actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="offline-bar" id="offlineBar">Sem conexão — dados salvos localmente</div>
+<div class="header">
+  <h1>&#129432; DengueTracker</h1>
+  <p>Vigilância Epidemiológica &middot; Rio Grande</p>
+</div>
+<nav class="nav">
+  <button onclick="goTab('lista',this)">&#128203; Notificações</button>
+  <button onclick="goTab('form',this)">&#43; Lançar</button>
+  <button onclick="goTab('dash',this)">&#128202; Dashboard</button>
+</nav>
+
+<!-- ===== LISTA ===== -->
+<div id="lista" class="tab">
+  <div class="filters">
+    <input  type="text" id="f_pac" placeholder="Paciente...">
+    <select id="f_sus">
+      <option value="">Todos</option>
+      <option value="Dengue">Dengue</option>
+      <option value="Chikungunya">Chikungunya</option>
+    </select>
+    <input  type="text" id="f_loc" placeholder="Localidade...">
+    <button class="btn-filter" onclick="applyFilter()">Filtrar</button>
+  </div>
+  <div id="listWrap"><div class="empty">Carregando...</div></div>
+</div>
+
+<!-- ===== VISUALIZAÇÃO ===== -->
+<div id="view" class="tab">
+  <div class="view-hdr">
+    <button class="view-back" onclick="goTab('lista',document.querySelectorAll('.nav button')[0])">&#8592;</button>
+    <div class="view-title" id="vTitle">Notificação</div>
+  </div>
+  <div id="vBody"></div>
+  <div class="view-actions">
+    <button class="btn-edit-v" id="btnVEdit">&#9999;&#65039; Editar</button>
+    <button class="btn-del-v"  id="btnVDel">&#128465;&#65039; Excluir</button>
+  </div>
+</div>
+
+<!-- ===== FORMULÁRIO ===== -->
+<div id="form" class="tab">
+  <form id="notifForm" onsubmit="submitForm(event)">
+    <input type="hidden" id="original_num">
+
+    <div class="card">
+      <h3>&#128203; Identificação <span class="badge-num" id="badgeNum">Novo</span></h3>
+      <div class="row2">
+        <div class="fg">
+          <label>Nº da Notificação</label>
+          <input type="number" id="edit_num" min="1" placeholder="Automático">
+        </div>
+        <div class="fg" style="display:flex;align-items:flex-end">
+          <div style="font-size:.75rem;color:#888;padding-bottom:12px;line-height:1.4">Deixe vazio para gerar automaticamente.</div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Data da Notificação *</label><input type="date" id="data_notificacao" required></div>
+        <div class="fg"><label>Data de Recebimento VA</label><input type="date" id="data_recebimento"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>&#129440; Suspeitos</h3>
+      <div class="fg">
+        <label>Agravo Suspeito</label>
+        <select id="suspeitos">
+          <option value="">Selecione...</option>
+          <option value="Dengue">Dengue</option>
+          <option value="Chikungunya">Chikungunya</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>&#128100; Paciente e PVE</h3>
+      <div class="fg"><label>Paciente</label><input type="text" id="paciente" placeholder="Nome completo"></div>
+      <div class="row2">
+        <div class="fg"><label>Início PVE</label><input type="date" id="inicio_pve"></div>
+        <div class="fg"><label>Término PVE</label><input type="date" id="termino_pve"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>&#127968; Imóveis</h3>
+      <div class="row3">
+        <div class="fg"><label>Total de Imóveis</label><input type="number" id="total_imoveis" min="0" oninput="calcPerc()"></div>
+        <div class="fg"><label>Total Visitados</label><input type="number" id="total_imoveis_v" min="0" oninput="calcPerc()"></div>
+        <div class="fg"><label>% Visitados</label><input type="text" id="perc_visitas" readonly placeholder="Automático"><div class="perc-hint" id="percHint"></div></div>
+      </div>
+      <div class="fg">
+        <label>Aedes aegypti / albopictus</label>
+        <select id="aedes">
+          <option value="">Selecione...</option>
+          <option value="Sim">Sim</option>
+          <option value="Não">Não</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>&#128205; Localização</h3>
+      <div class="fg"><label>Localidades Trabalhadas</label><input type="text" id="localidades" placeholder="Ex: Centro 1, Cidade Nova"></div>
+      <div class="fg"><label>Endereços</label><input type="text" id="endereco" placeholder="Rua, número, bairro..."></div>
+    </div>
+
+    <div class="card">
+      <h3>&#128300; Resultados</h3>
+      <div class="row3">
+        <div class="fg"><label>Negativos</label><select id="negativos"><option value="">—</option><option value="Dengue">Dengue</option><option value="Chikungunya">Chikungunya</option></select></div>
+        <div class="fg"><label>Positivos Dengue</label><select id="pos_dengue"><option value="">—</option><option value="Autóctone">Autóctone</option><option value="Importado">Importado</option></select></div>
+        <div class="fg"><label>Positivos Chikungunya</label><select id="pos_chikungunya"><option value="">—</option><option value="Autóctone">Autóctone</option><option value="Importado">Importado</option></select></div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="submitBtn">&#128190; Salvar Notificação</button>
+    <button type="button" class="btn btn-secondary" id="btnCancel" style="display:none" onclick="cancelEdit()">&#10006; Cancelar Edição</button>
+  </form>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="dash" class="tab">
+  <div class="dash-grid" id="dashGrid"><div class="empty">Carregando...</div></div>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9uzlLTUrqr7Geggoiz95m-BCtDz87Ik7EiBf9xm8aHyUDB6asOBGrAcF76GMqrBUUQA/exec'; // << Cole aqui a URL da Web App
+
+var allData = [];
+
+window.addEventListener('offline', function(){ document.getElementById('offlineBar').style.display='block'; });
+window.addEventListener('online',  function(){ document.getElementById('offlineBar').style.display='none'; });
+
+window.onload = function(){
+  goTab('lista', document.querySelectorAll('.nav button')[0]);
+};
+
+// ── Navegação ──────────────────────────────────────────────
+function goTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.nav button').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'lista') loadData();
+  if (id === 'dash')  loadData();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Carregar dados ─────────────────────────────────────────
+async function loadData() {
+  if (!SCRIPT_URL) { render([]); renderDash([]); return; }
+  try {
+    var r = await fetch(SCRIPT_URL + '?action=getNotifications&t=' + Date.now());
+    allData = await r.json();
+  } catch(e) { allData = []; }
+  allData.sort(function(a,b){ return parseInt(a.num_notificacao) - parseInt(b.num_notificacao); });
+  render(allData);
+  renderDash(allData);
+}
+
+// ── Filtro ─────────────────────────────────────────────────
+function applyFilter() {
+  var pac = document.getElementById('f_pac').value.trim().toLowerCase();
+  var sus = document.getElementById('f_sus').value;
+  var loc = document.getElementById('f_loc').value.trim().toLowerCase();
+  var filtered = allData.filter(function(n){
+    return (!pac || (n.paciente||'').toLowerCase().includes(pac)) &&
+           (!sus || n.suspeitos === sus) &&
+           (!loc || (n.localidades||'').toLowerCase().includes(loc));
+  });
+  filtered.sort(function(a,b){ return parseInt(a.num_notificacao) - parseInt(b.num_notificacao); });
+  render(filtered);
+}
+
+// ── Renderizar lista ───────────────────────────────────────
+function render(list) {
+  var el = document.getElementById('listWrap');
+  if (!list.length) { el.innerHTML = '<div class="empty">Nenhuma notificação encontrada.</div>'; return; }
+  el.innerHTML = '';
+  list.forEach(function(n){
+    var cls = (n.suspeitos||'').toLowerCase();
+    var div = document.createElement('div');
+    div.className = 'notif-item ' + cls;
+    div.innerHTML =
+      '<div class="ni-header">' +
+        '<div>' +
+          '<span class="ni-num">Nº ' + (n.num_notificacao||'?') + '</span>' +
+          '<div class="ni-title">' + (n.paciente||'Sem nome') + '</div>' +
+          '<span class="tag ' + (cls||'empty') + '">' + (n.suspeitos||'Indefinido') + '</span>' +
+        '</div>' +
+        '<div style="font-size:.8rem;color:#888;text-align:right">' +
+          '<div>' + (n.data_notificacao||'') + '</div>' +
+          (n.aedes==='Sim' ? '<div style="color:#e53935;font-weight:600;margin-top:2px">Aedes &#9888;</div>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="ni-preview">' +
+        '<span>&#128205; ' + (n.localidades||'—') + '</span>' +
+        '<span>&#127968; ' + (n.total_imoveis||'—') + ' imóveis</span>' +
+      '</div>';
+    div.onclick = function(){ openView(n); };
+    el.appendChild(div);
+  });
+}
+
+// ── Visualização ───────────────────────────────────────────
+function v(val){ return val ? String(val) : '<span class="none">—</span>'; }
+
+function openView(n) {
+  document.getElementById('vTitle').textContent = 'Nº ' + n.num_notificacao + ' — ' + (n.paciente||'Sem nome');
+  var cls = (n.suspeitos||'').toLowerCase();
+  document.getElementById('vBody').innerHTML =
+    vc('&#128203; Identificação',[
+      ['Nº Notificação', v(n.num_notificacao)],
+      ['Agravo','<span class="tag '+(cls||'empty')+'" style="font-size:.85rem">'+(n.suspeitos||'—')+'</span>'],
+      ['Data Notificação', v(n.data_notificacao)],
+      ['Data Recebimento VA', v(n.data_recebimento)]
+    ]) +
+    vc('&#128100; Paciente e PVE',[
+      ['Paciente', v(n.paciente), true],
+      ['Início PVE', v(n.inicio_pve)],
+      ['Término PVE', v(n.termino_pve)]
+    ]) +
+    vc('&#127968; Imóveis',[
+      ['Total Imóveis', v(n.total_imoveis)],
+      ['Total Visitados', v(n.total_imoveis_v)],
+      ['% Visitados', v(n.perc_visitas)],
+      ['Aedes aegypti/albopictus', v(n.aedes)]
+    ]) +
+    vc('&#128205; Localização',[
+      ['Localidades', v(n.localidades), true],
+      ['Endereços', v(n.endereco), true]
+    ]) +
+    vc('&#128300; Resultados',[
+      ['Negativos', v(n.negativos)],
+      ['Positivos Dengue', v(n.pos_dengue)],
+      ['Positivos Chikungunya', v(n.pos_chikungunya)]
+    ]);
+  document.getElementById('btnVEdit').onclick = function(){ fillForm(n); };
+  document.getElementById('btnVDel').onclick  = function(){ delNotif(n.num_notificacao); };
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.nav button').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('view').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function vc(title, fields) {
+  var html = '<div class="view-card"><h4>' + title + '</h4><div class="vgrid">';
+  fields.forEach(function(f){
+    var span = f[2] ? 'grid-column:1/-1' : '';
+    html += '<div class="vf" style="' + span + '"><label>' + f[0] + '</label><span>' + f[1] + '</span></div>';
+  });
+  return html + '</div></div>';
+}
+
+// ── Formulário ─────────────────────────────────────────────
+function calcPerc() {
+  var tot = parseFloat(document.getElementById('total_imoveis').value) || 0;
+  var vis = parseFloat(document.getElementById('total_imoveis_v').value) || 0;
+  if (tot > 0) {
+    var p = ((vis / tot) * 100).toFixed(2);
+    document.getElementById('perc_visitas').value = p + '%';
+    document.getElementById('percHint').textContent = vis + ' de ' + tot + ' imóveis';
+  } else {
+    document.getElementById('perc_visitas').value = '';
+    document.getElementById('percHint').textContent = '';
+  }
+}
+
+// Converte "20/03/2026" ou "2026-03-20" para "2026-03-20" (input date)
+function toISO(val) {
+  if (!val) return '';
+  var s = String(val).trim();
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+    var p = s.split('/');
+    return p[2] + '-' + p[1] + '-' + p[0];
+  }
+  return s; // já está em ISO ou outro formato
+}
+
+function clearForm() {
+  document.getElementById('notifForm').reset();
+  document.getElementById('original_num').value = '';
+  document.getElementById('edit_num').value = '';
+  document.getElementById('perc_visitas').value = '';
+  document.getElementById('percHint').textContent = '';
+  document.getElementById('badgeNum').textContent = 'Novo';
+  document.getElementById('submitBtn').textContent = '&#128190; Salvar Notificação';
+  document.getElementById('btnCancel').style.display = 'none';
+}
+
+function cancelEdit() {
+  clearForm();
+  goTab('lista', document.querySelectorAll('.nav button')[0]);
+}
+
+function fillForm(n) {
+  // Guardar número original ANTES de qualquer edição
+  document.getElementById('original_num').value    = String(n.num_notificacao);
+  document.getElementById('edit_num').value        = String(n.num_notificacao);
+  document.getElementById('data_notificacao').value= toISO(n.data_notificacao);
+  document.getElementById('data_recebimento').value= toISO(n.data_recebimento);
+  document.getElementById('suspeitos').value       = n.suspeitos       || '';
+  document.getElementById('paciente').value        = n.paciente        || '';
+  document.getElementById('inicio_pve').value      = toISO(n.inicio_pve);
+  document.getElementById('termino_pve').value     = toISO(n.termino_pve);
+  document.getElementById('total_imoveis').value   = n.total_imoveis   || '';
+  document.getElementById('total_imoveis_v').value = n.total_imoveis_v || '';
+  document.getElementById('perc_visitas').value    = n.perc_visitas    || '';
+  document.getElementById('percHint').textContent  = '';
+  document.getElementById('aedes').value           = n.aedes           || '';
+  document.getElementById('localidades').value     = n.localidades     || '';
+  document.getElementById('endereco').value        = n.endereco        || '';
+  document.getElementById('negativos').value       = n.negativos       || '';
+  document.getElementById('pos_dengue').value      = n.pos_dengue      || '';
+  document.getElementById('pos_chikungunya').value = n.pos_chikungunya || '';
+  document.getElementById('badgeNum').textContent  = 'Nº ' + n.num_notificacao;
+  document.getElementById('submitBtn').textContent = '&#9999;&#65039; Atualizar Notificação';
+  document.getElementById('btnCancel').style.display = 'block';
+  goTab('form', document.querySelectorAll('.nav button')[1]);
+}
+
+function getFormData() {
+  var editNum = document.getElementById('edit_num').value.trim();
+  var origNum = document.getElementById('original_num').value.trim();
+  return {
+    original_num:     origNum !== '' ? parseInt(origNum)  : null,
+    num_notificacao:  editNum !== '' ? parseInt(editNum)  : null,
+    data_notificacao: document.getElementById('data_notificacao').value,
+    data_recebimento: document.getElementById('data_recebimento').value,
+    suspeitos:        document.getElementById('suspeitos').value,
+    paciente:         document.getElementById('paciente').value,
+    inicio_pve:       document.getElementById('inicio_pve').value,
+    termino_pve:      document.getElementById('termino_pve').value,
+    total_imoveis:    document.getElementById('total_imoveis').value,
+    total_imoveis_v:  document.getElementById('total_imoveis_v').value,
+    aedes:            document.getElementById('aedes').value,
+    localidades:      document.getElementById('localidades').value,
+    endereco:         document.getElementById('endereco').value,
+    negativos:        document.getElementById('negativos').value,
+    pos_dengue:       document.getElementById('pos_dengue').value,
+    pos_chikungunya:  document.getElementById('pos_chikungunya').value
+  };
+}
+
+async function submitForm(e) {
+  e.preventDefault();
+  var data = getFormData();
+  var btn  = document.getElementById('submitBtn');
+  var orig = btn.textContent;
+  btn.textContent = 'Salvando...'; btn.disabled = true;
+  try {
+    var resp   = await fetch(SCRIPT_URL, { method:'POST', body: JSON.stringify({ action:'saveNotification', data:data }) });
+    var result = await resp.json();
+    if (result.success) {
+      alert('\u2705 Nº ' + result.num_notificacao + ' salvo com sucesso!');
+      clearForm();
+      goTab('lista', document.querySelectorAll('.nav button')[0]);
+    } else {
+      alert('\u26a0\ufe0f ' + (result.error || 'Erro ao salvar.'));
+    }
+  } catch(err) {
+    alert('\u26a0\ufe0f Erro de conexão: ' + err.message);
+  }
+  btn.textContent = orig; btn.disabled = false;
+}
+
+async function delNotif(num) {
+  if (!confirm('Excluir notificação Nº ' + num + '?')) return;
+  try {
+    await fetch(SCRIPT_URL, { method:'POST', body: JSON.stringify({ action:'deleteNotification', id: num }) });
+  } catch(e){}
+  goTab('lista', document.querySelectorAll('.nav button')[0]);
+}
+
+// ── Dashboard ──────────────────────────────────────────────
+function renderDash(list) {
+  var cards = [
+    ['Total Notificações',       list.length,                                                       '#0d47a1'],
+    ['Suspeitos Dengue',         list.filter(function(n){ return n.suspeitos==='Dengue'; }).length, '#e53935'],
+    ['Suspeitos Chikungunya',    list.filter(function(n){ return n.suspeitos==='Chikungunya'; }).length, '#ff9800'],
+    ['Com Aedes',                list.filter(function(n){ return n.aedes==='Sim'; }).length,        '#f44336'],
+    ['Pos. Dengue Autóctone',    list.filter(function(n){ return n.pos_dengue==='Autóctone'; }).length,    '#c62828'],
+    ['Pos. Dengue Importado',    list.filter(function(n){ return n.pos_dengue==='Importado'; }).length,    '#e57373'],
+    ['Pos. Chikun. Autóctone',   list.filter(function(n){ return n.pos_chikungunya==='Autóctone'; }).length, '#e65100'],
+    ['Pos. Chikun. Importado',   list.filter(function(n){ return n.pos_chikungunya==='Importado'; }).length, '#ffb74d'],
+    ['Negativos Dengue',         list.filter(function(n){ return n.negativos==='Dengue'; }).length, '#388e3c'],
+    ['Negativos Chikungunya',    list.filter(function(n){ return n.negativos==='Chikungunya'; }).length, '#66bb6a']
+  ];
+  var g = document.getElementById('dashGrid');
+  g.innerHTML = '';
+  cards.forEach(function(c){
+    var d = document.createElement('div');
+    d.className = 'dash-card';
+    d.innerHTML = '<div class="dval" style="color:'+c[2]+'">'+c[1]+'</div><div class="dlbl">'+c[0]+'</div>';
+    g.appendChild(d);
+  });
+}
+</script>
+</body>
+</html>
